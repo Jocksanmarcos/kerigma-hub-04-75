@@ -27,28 +27,30 @@ import { useNewUserRole, newRolePermissions, UserRole } from '@/hooks/useNewRole
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-const mainNavItems = [
+// Gestão Eclesiástica
+const ecclesiasticalNavItems = [
   { title: 'Dashboard', url: '/dashboard', icon: Home, page: 'dashboard' },
-  { title: 'Gestão de Pessoas', url: '/dashboard/pessoas', icon: Users, page: 'pessoas' },
-  { title: 'Centro de Células', url: '/admin/celulas', icon: HeartHandshake, page: 'celulas' },
-  { title: 'Centro de Ensino', url: '/ensino', icon: GraduationCap, page: 'ensino' },
-  { title: 'Agenda & Cronogramas', url: '/dashboard/agenda', icon: Calendar, page: 'agenda' },
-  { title: 'Escalas de Serviço', url: '/dashboard/escalas', icon: Clock, page: 'escalas' },
-  { title: 'Ministérios & Louvor', url: '/dashboard/ministerios', icon: Layers, page: 'ministerios' },
-  { title: 'Studio de Cultos', url: '/dashboard/cultos', icon: Music, page: 'cultos' },
-  { title: 'Louvor & Ambiente', url: '/dashboard/louvor', icon: Palette, page: 'louvor' },
-  { title: 'Central de Eventos', url: '/dashboard/eventos', icon: Ticket, page: 'eventos' },
+  { title: 'Pessoas', url: '/dashboard/pessoas', icon: Users, page: 'pessoas' },
+  { title: 'Células', url: '/admin/celulas', icon: HeartHandshake, page: 'celulas' },
+  { title: 'Aconselhamento Pastoral', url: '/admin/aconselhamento', icon: MessageSquare, page: 'aconselhamento', roles: ['pastor'] },
+  { title: 'Agenda', url: '/dashboard/agenda', icon: Calendar, page: 'agenda' },
+  { title: 'Liturgia & Cultos', url: '/dashboard/cultos', icon: Music, page: 'cultos' },
+  { title: 'Eventos', url: '/dashboard/eventos', icon: Ticket, page: 'eventos' },
   { title: 'Financeiro', url: '/dashboard/financeiro', icon: Landmark, page: 'financeiro' },
   { title: 'Patrimônio', url: '/dashboard/patrimonio', icon: Briefcase, page: 'patrimonio' },
-  { title: 'Aconselhamento', url: '/admin/aconselhamento', icon: MessageSquare, page: 'aconselhamento', roles: ['pastor'] },
+  { title: 'Ministérios', url: '/dashboard/ministerios', icon: Layers, page: 'ministerios' },
+];
+
+// Studio Digital
+const studioNavItems = [
+  { title: 'Centro de Ensino', url: '/ensino', icon: GraduationCap, page: 'ensino' },
+  { title: 'Studio de Louvor', url: '/dashboard/louvor', icon: Palette, page: 'louvor' },
   { title: 'IA Pastoral', url: '/admin/ia-pastoral', icon: Brain, page: 'ia-pastoral', roles: ['pastor'] },
 ];
 
-const analyticsNavItems = [
-  { title: 'Analytics & Relatórios', url: '/admin/analytics', icon: BarChart3, page: 'analytics' },
-];
-
+// Painel Administrativo
 const adminNavItems = [
+  { title: 'Analytics & Relatórios', url: '/admin/analytics', icon: BarChart3, page: 'analytics' },
   { title: 'Centro de Governança', url: '/admin/governanca', icon: ShieldCheck, page: 'governanca' },
   { title: 'Configurações', url: '/admin/configuracoes', icon: Settings, page: 'configuracoes' },
 ];
@@ -75,7 +77,7 @@ export const Sidebar: React.FC = () => {
     );
   };
 
-  const filteredMainItems = mainNavItems.filter(item => {
+  const filteredEcclesiasticalItems = ecclesiasticalNavItems.filter(item => {
     if (!userRole) return false;
     const permissions = newRolePermissions[userRole as UserRole];
     if (!permissions) return false;
@@ -86,7 +88,18 @@ export const Sidebar: React.FC = () => {
     return permissions.pages.includes(item.page);
   });
 
-  const filteredAnalyticsItems = analyticsNavItems.filter(item => {
+  const filteredStudioItems = studioNavItems.filter(item => {
+    if (!userRole) return false;
+    const permissions = newRolePermissions[userRole as UserRole];
+    if (!permissions) return false;
+    
+    // Check role-specific items
+    if (item.roles && !item.roles.includes(userRole)) return false;
+    
+    return permissions.pages.includes(item.page);
+  });
+
+  const filteredAdminItems = adminNavItems.filter(item => {
     if (!userRole) return false;
     const permissions = newRolePermissions[userRole as UserRole];
     if (!permissions) return false;
@@ -123,38 +136,16 @@ export const Sidebar: React.FC = () => {
 
       {/* Navigation */}
       <div className="min-h-0 flex-1 overflow-y-auto p-4 space-y-6">
-        {/* Main Navigation */}
-        <div>
-          {!collapsed && (
-            <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Principal
-            </h3>
-          )}
-          <nav className="space-y-1">
-            {filteredMainItems.map((item) => (
-              <NavLink
-                key={item.title}
-                to={item.url}
-                className={getNavClasses(item.url)}
-                title={collapsed ? item.title : undefined}
-              >
-                <item.icon className="h-4 w-4 flex-shrink-0" />
-                {!collapsed && <span className="flex-1">{item.title}</span>}
-              </NavLink>
-            ))}
-          </nav>
-        </div>
-
-        {/* Analytics Navigation */}
-        {filteredAnalyticsItems.length > 0 && (
+        {/* Gestão Eclesiástica */}
+        {filteredEcclesiasticalItems.length > 0 && (
           <div>
             {!collapsed && (
               <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Analytics
+                Gestão Eclesiástica
               </h3>
             )}
             <nav className="space-y-1">
-              {filteredAnalyticsItems.map((item) => (
+              {filteredEcclesiasticalItems.map((item) => (
                 <NavLink
                   key={item.title}
                   to={item.url}
@@ -169,16 +160,40 @@ export const Sidebar: React.FC = () => {
           </div>
         )}
 
-        {/* Admin Navigation */}
-        {userRole === 'pastor' && (
+        {/* Studio Digital */}
+        {filteredStudioItems.length > 0 && (
           <div>
             {!collapsed && (
               <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Administração
+                Studio Digital
               </h3>
             )}
             <nav className="space-y-1">
-              {adminNavItems.map((item) => (
+              {filteredStudioItems.map((item) => (
+                <NavLink
+                  key={item.title}
+                  to={item.url}
+                  className={getNavClasses(item.url)}
+                  title={collapsed ? item.title : undefined}
+                >
+                  <item.icon className="h-4 w-4 flex-shrink-0" />
+                  {!collapsed && <span className="flex-1">{item.title}</span>}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+        )}
+
+        {/* Painel Administrativo */}
+        {filteredAdminItems.length > 0 && userRole === 'pastor' && (
+          <div>
+            {!collapsed && (
+              <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Painel Administrativo
+              </h3>
+            )}
+            <nav className="space-y-1">
+              {filteredAdminItems.map((item) => (
                 <NavLink
                   key={item.title}
                   to={item.url}

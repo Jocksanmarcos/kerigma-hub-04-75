@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
+import { AppLayoutEnhanced } from "@/components/layout/AppLayoutEnhanced";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PatrimonioInventory } from "@/components/patrimonio/PatrimonioInventory";
 import { PatrimonioCategorias } from "@/components/patrimonio/PatrimonioCategorias";
@@ -38,7 +38,7 @@ const PatrimonioPage: React.FC = () => {
   });
 
   return (
-    <AppLayout>
+    <AppLayoutEnhanced>
       <header className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Central de Governança de Ativos</h1>
         <p className="text-muted-foreground">Sistema completo de gestão patrimonial: inventário, reservas, manutenções e relatórios.</p>
@@ -46,7 +46,7 @@ const PatrimonioPage: React.FC = () => {
 
       <main>
         <Tabs defaultValue="inventario" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-flex">
             <TabsTrigger value="inventario">Inventário</TabsTrigger>
             <TabsTrigger value="categorias">Categorias</TabsTrigger>
             <TabsTrigger value="reservas">Reservas</TabsTrigger>
@@ -75,7 +75,7 @@ const PatrimonioPage: React.FC = () => {
           </TabsContent>
         </Tabs>
       </main>
-    </AppLayout>
+    </AppLayoutEnhanced>
   );
 };
 
