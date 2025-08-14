@@ -33,6 +33,7 @@ const PublicEventoPage = React.lazy(() => import("@/pages/public/PublicEventoPag
 
 const AuthPage = React.lazy(() => import("@/pages/auth/AuthPage"));
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
+const SiteMapPage = React.lazy(() => import("@/pages/SiteMapPage"));
 
 const MinimalLoader = () => <PageLoader type="minimal" />;
 
@@ -52,6 +53,9 @@ export const AppRouter: React.FC = () => {
 
         {/* Auth Routes */}
         <Route path="/auth" element={<AuthPage />} />
+        
+        {/* Sitemap */}
+        <Route path="/sitemap" element={<SiteMapPage />} />
 
         {/* Protected Dashboard Routes */}
         <Route path="/admin" element={<Index />} />
